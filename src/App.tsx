@@ -10,7 +10,6 @@ function App() {
   const interpreter = useRef<BfInterpreter>(new BfInterpreter(8));
   const [code, setCode] = useState("");
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
-  let timerId: number | undefined = undefined;
 
   function runCode() {
     try {
@@ -54,7 +53,7 @@ function App() {
         <div>
           <table>
             <tr>
-              {memory.map((value, index) => <th className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{index}</th>)}
+              {memory.map((_, index) => <th className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{index}</th>)}
             </tr>
             <tr>
               {memory.map((value, index) => <td className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{value}</td>)}
