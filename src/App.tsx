@@ -45,19 +45,23 @@ function App() {
   return (
     <>
         <div>
-        <textarea value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
-        <button onClick={runCode}>Run</button>
-        <button onClick={runCodeSlowly}>Run Slow</button>
+          <textarea value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
+          <div style={{ paddingTop: 10 }}>
+            <button onClick={runCode}>Run</button>
+            <button onClick={runCodeSlowly}>Run Slow</button>
+          </div>
         </div>
 
         <div>
           <table>
-            <tr>
-              {memory.map((_, index) => <th className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{index}</th>)}
-            </tr>
-            <tr>
-              {memory.map((value, index) => <td className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{value}</td>)}
-            </tr>
+            <tbody>
+              <tr>
+                {memory.map((_, index) => <th key={index} className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{index}</th>)}
+              </tr>
+              <tr>
+                {memory.map((value, index) => <td key={index} className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{value}</td>)}
+              </tr>
+            </tbody>
           </table>
         </div>
     </>
