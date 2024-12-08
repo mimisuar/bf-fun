@@ -59,7 +59,7 @@ class BfInterpreter {
         }
     }
 
-    async runProgramAsync(stepCallback: () => void, input: number[] = []) {
+    async runProgramAsync(timerPerStep: number, stepCallback: () => void, input: number[] = []) {
         this.resetProgramState(input);
 
         while (this.programCounter < this.program.length) {
@@ -70,7 +70,7 @@ class BfInterpreter {
             if (character === "[" || character === "]") {
                 continue;
             }
-            await delay(500);
+            await delay(timerPerStep);
         }
     }
 
