@@ -102,27 +102,19 @@ class BfInterpreter {
                 break;
 
             case ".":
-                this.output.push(this.memory[this.memoryIndex]);
+                this.pushToOutput();
                 break;
 
             case ",":
-                let num = this.input.pop();
-                if (num === undefined) {
-                    throw "Insufficient input.";
-                }
-                this.memory[this.memoryIndex] = num!;
+                this.pullFromInput();
                 break;
 
             case "[":
-                if (this.memory[this.memoryIndex] === 0) {
-                    this.programCounter = this.jumpPoints[this.programCounter];
-                }
+                this.startLoop();
                 break;
 
             case "]":
-                if (this.memory[this.memoryIndex] !== 0) {
-                    this.programCounter = this.jumpPoints[this.programCounter];
-                }
+                this.endLoop();
                 break;
         }
 
@@ -149,6 +141,30 @@ class BfInterpreter {
 
     decrementMemory(): void {
         this.memory[this.memoryIndex] -= 1;
+    }
+
+    pushToOutput(): void {
+        this.output.push(this.memory[this.memoryIndex]);
+    }
+
+    pullFromInput(): void {
+        let num = this.input.pop();
+        if (num === undefined) {
+            throw "Insufficient input.";
+        }
+        this.memory[this.memoryIndex] = num!;
+    }
+
+    startLoop(): void {
+        if (this.memory[this.memoryIndex] === 0) {
+            this.programCounter = this.jumpPoints[this.programCounter];
+        }
+    }
+
+    endLoop(): void {
+        if (this.memory[this.memoryIndex] !== 0) {
+            this.programCounter = this.jumpPoints[this.programCounter];
+        }
     }
 }
 
