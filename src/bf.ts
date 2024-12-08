@@ -74,6 +74,10 @@ class BfInterpreter {
         }
     }
 
+    stopProgram() {
+        this.programCounter = this.program.length;
+    }
+
     resetProgramState(input: number[] = []): void {
         this.programCounter = 0;
         this.input = input;

@@ -10,8 +10,9 @@ function App() {
   const interpreter = useRef<BfInterpreter>(new BfInterpreter(8));
   const [code, setCode] = useState("");
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
+  const [programRunning, setProgramRunning] = useState(false);
 
-  function runCode() {
+  async function runCodeAsync() {
     try {
       interpreter.current.setProgram(code);
     }
@@ -19,27 +20,14 @@ function App() {
       console.error("Scanning failed: ", e);
       return;
     }
-    
-    try {
-      interpreter.current.runProgram();
-      setMemory([...interpreter.current.memory]);
-    }
-    catch (e) {
-      console.error("Running failed: ", e);
-    }
+
+    setProgramRunning(true);
+    await interpreter.current.runProgramAsync(() => setMemory([...interpreter.current.memory]));
+    setProgramRunning(false);
   }
 
-  async function runCodeSlowly() {
-    try {
-      interpreter.current.setProgram(code);
-    }
-    catch (e) {
-      console.error("Scanning failed: ", e);
-      return;
-    }
-
-    await interpreter.current.runProgramAsync(() => setMemory([...interpreter.current.memory]));
-    console.log("done!");
+  function breakProgram() {
+    interpreter.current.stopProgram();
   }
 
   return (
@@ -47,8 +35,7 @@ function App() {
         <div>
           <textarea value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
           <div style={{ paddingTop: 10 }}>
-            <button onClick={runCode}>Run</button>
-            <button onClick={runCodeSlowly}>Run Slow</button>
+            {programRunning === false ? <button onClick={runCodeAsync}>Run</button> : <button onClick={breakProgram}>Break</button>}
           </div>
         </div>
 
