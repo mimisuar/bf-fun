@@ -1,5 +1,15 @@
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
+interface BfInterpreterOptions {
+    memorySize?: number;
+    disableIO?: boolean;
+}
+
+const defaultOptions: BfInterpreterOptions = {
+    memorySize: 8,
+    disableIO: false
+};
+
 class BfInterpreter {
     memory: number[] = [];
     jumpPoints: number[] = [];
@@ -9,9 +19,16 @@ class BfInterpreter {
     programCounter: number = 0;
     output: number[] = [];
     input: number[] = [];
+    disableIO: boolean = false;
 
-    constructor(size: number) {
-        this.size = size;
+    constructor(options?: BfInterpreterOptions) {
+        if (options === undefined) {
+            options = defaultOptions;
+        }
+
+        this.size = options.memorySize !== undefined ? options.memorySize : defaultOptions.memorySize!;
+        this.disableIO = options.disableIO !== undefined ? options.disableIO : defaultOptions.disableIO!;
+
         this.resetMemory();
     }
 
@@ -61,13 +78,14 @@ class BfInterpreter {
 
     async runProgramAsync(timerPerStep: number, stepCallback: () => void, input: number[] = []) {
         this.resetProgramState(input);
+        const actionCharacters: string = "+-><"; // these are the characters that alter machine state
 
         while (this.programCounter < this.program.length) {
             let character = this.program[this.programCounter];
             this.interpretCode();
             stepCallback();
 
-            if (character === "[" || character === "]") {
+            if (!actionCharacters.includes(character)) {
                 continue;
             }
             await delay(timerPerStep);
@@ -106,11 +124,15 @@ class BfInterpreter {
                 break;
 
             case ".":
-                this.pushToOutput();
+                if (!this.disableIO) {
+                    this.pushToOutput();
+                }
                 break;
 
             case ",":
-                this.pullFromInput();
+                if (!this.disableIO) {
+                    this.pullFromInput();
+                }
                 break;
 
             case "[":
