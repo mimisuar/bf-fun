@@ -15,9 +15,10 @@ function App() {
   const [programRunning, setProgramRunning] = useState(false);
   const [timePerStep, setTimePerStep] = useState(500);
   const [statusMessage, setStatusMessage] = useState<StatusMessage>({message: ""})
+  const [correctProgramLength, setCorrectProgramLength] = useState(0);
 
   useEffect(() => {
-    let tmpTargets = [0, 6, 0, 0, 0, 0, 0, 0];
+    let tmpTargets = [0, 12, 0, 0, 0, 0, 0, 0];
 
     setTargets(tmpTargets);
   }, [])
@@ -45,7 +46,8 @@ function App() {
     }
 
     
-    setStatusMessage({type: "success", message: "Correct! Can your program be shorter?"})
+    setStatusMessage({type: "success", message: "Correct!"})
+    setCorrectProgramLength(code.length);
   }
 
   function breakProgram() {
@@ -60,7 +62,7 @@ function App() {
     return (
       <div className={statusMessage.type === "success" ? "success-card" : "error-card"}>
         {<p>{statusMessage.message}</p>}
-        {statusMessage.type === "success" ? <p>Your program is {code.length} characters long. Can you make it shorter?</p> : <></>}
+        {statusMessage.type === "success" ? <p>Your program is {correctProgramLength} characters long. Can you make it shorter?</p> : <></>}
       </div>
     );
   }
