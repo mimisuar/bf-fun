@@ -14,7 +14,13 @@ function App() {
   const [targets, setTargets] = useState<number[]>([]);
   const [programRunning, setProgramRunning] = useState(false);
   const [timePerStep, setTimePerStep] = useState(500);
-  const [statusMessage, setStatusMessage] = useState<StatusMessage>({type: undefined, message: ""})
+  const [statusMessage, setStatusMessage] = useState<StatusMessage>({message: ""})
+
+  useEffect(() => {
+    let tmpTargets = [0, 6, 0, 0, 0, 0, 0, 0];
+
+    setTargets(tmpTargets);
+  }, [])
 
   async function runCodeAsync() {
     try {
@@ -26,6 +32,7 @@ function App() {
     }
 
     setProgramRunning(true);
+    setStatusMessage({message: ""});
     await interpreter.current.runProgramAsync(timePerStep, () => setMemory([...interpreter.current.memory]));
     setProgramRunning(false);
 
@@ -37,7 +44,8 @@ function App() {
       }
     }
 
-    setStatusMessage({type: "success", message: "Correct!"})
+    
+    setStatusMessage({type: "success", message: "Correct! Can your program be shorter?"})
   }
 
   function breakProgram() {
@@ -51,7 +59,8 @@ function App() {
 
     return (
       <div className={statusMessage.type === "success" ? "success-card" : "error-card"}>
-        <p>{statusMessage.message}</p>
+        {<p>{statusMessage.message}</p>}
+        {statusMessage.type === "success" ? <p>Your program is {code.length} characters long. Can you make it shorter?</p> : <></>}
       </div>
     );
   }
