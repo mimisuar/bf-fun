@@ -2,29 +2,26 @@ import { useState, useRef, useEffect } from 'react'
 import './App.css'
 import BfInterpreter from './bf'
 
+interface StatusMessage {
+  type?: "success" | "error",
+  message: string
+}
+
 function App() {
-  const interpreter = useRef<BfInterpreter>(new BfInterpreter(8));
+  const interpreter = useRef<BfInterpreter>(new BfInterpreter({memorySize: 8, disableIO: true}));
   const [code, setCode] = useState("");
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
   const [targets, setTargets] = useState<number[]>([]);
   const [programRunning, setProgramRunning] = useState(false);
   const [timePerStep, setTimePerStep] = useState(500);
-
-  useEffect(() => {
-    let tmpTargets: number[] = [];
-    for (let i = 0; i < interpreter.current.size; i++) {
-      tmpTargets[i] = Math.floor(Math.random() * 100 - 50);
-    }
-
-    setTargets(tmpTargets);
-  }, [])
+  const [statusMessage, setStatusMessage] = useState<StatusMessage>({type: undefined, message: ""})
 
   async function runCodeAsync() {
     try {
       interpreter.current.setProgram(code);
     }
     catch (e) {
-      console.error("Scanning failed: ", e);
+      setStatusMessage({type: "error", message: "Scanning failed: " + e})
       return;
     }
 
@@ -35,16 +32,28 @@ function App() {
     // compare the input output
     for (let i = 0; i < interpreter.current.size; i++) {
       if (interpreter.current.memory[i] !== targets[i]) {
-        console.error("OUTPUT IS INCORRECT");
+        setStatusMessage({type: "error", message: "Output is incorrect"});
         return;
       }
     }
 
-    console.log("CORRECT");
+    setStatusMessage({type: "success", message: "Correct!"})
   }
 
   function breakProgram() {
     interpreter.current.stopProgram();
+  }
+
+  function getStatusCard() {
+    if (statusMessage.type === undefined) {
+      return <></>;
+    }
+
+    return (
+      <div className={statusMessage.type === "success" ? "success-card" : "error-card"}>
+        <p>{statusMessage.message}</p>
+      </div>
+    );
   }
 
   return (
@@ -75,6 +84,8 @@ function App() {
             </tbody>
           </table>
         </div>
+        
+        {getStatusCard()}
     </>
   )
 }

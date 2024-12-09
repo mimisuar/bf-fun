@@ -62,3 +62,23 @@ textarea {
   border-radius: 8px;
   padding: 5px 6px;
 }
+
+.success-card {
+  background-color: darkgreen;
+  border: 1px solid lightgray;
+  margin: 4px auto;
+  border-radius: 4px;
+  p {
+    color: lightgray;
+  }
+}
+
+.error-card {
+  background-color: darkred;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  margin: 4px auto;
+  p {
+    color: lightgray;
+  }
+}
