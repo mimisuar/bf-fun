@@ -48,7 +48,7 @@ function App() {
     }
 
     let input: number[] = [];
-    for (let i = 0; i < programInput.length; i++) {
+    for (let i = programInput.length - 1; i >= 0; i--) {
       input.push(programInput.charCodeAt(i));
     }
 
