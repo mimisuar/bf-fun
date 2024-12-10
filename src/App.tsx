@@ -3,23 +3,22 @@ import './App.css'
 import BfInterpreter from './bf'
 import Instructions from './components/Instructions'
 import ProgramOutputViewer from './components/ProgramOutputViewer'
+import ProgramInputForm from './components/ProgramInputForm'
+import {StatusCard, StatusType} from './components/StatusCard'
 
-interface StatusMessage {
-  type?: "success" | "error",
-  message: string
-}
 
 function App() {
   const interpreter = useRef<BfInterpreter>(new BfInterpreter({memorySize: 32, disableIO: false}));
-  const [code, setCode] = useState("");
+  
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
   const [targets, setTargets] = useState<number[]>([]);
   const [programRunning, setProgramRunning] = useState(false);
-  const [timePerStep, setTimePerStep] = useState(66);
-  const [statusMessage, setStatusMessage] = useState<StatusMessage>({message: ""})
-  const [correctProgramLength, setCorrectProgramLength] = useState(0);
-  const [programInput, setProgramInput] = useState("");
   const [programOutput, setProgramOutput] = useState("");
+
+  // for the status card
+  const [statusType, setStatusType] = useState<StatusType | undefined>(undefined);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [correctProgramLength, setCorrectProgramLength] = useState(0);
 
   useEffect(() => {
     let tmpTargets = [];
@@ -30,12 +29,14 @@ function App() {
     setTargets(tmpTargets);
   }, [])
 
-  async function runCodeAsync() {
+  async function runCodeAsync(code: string, programInput: string, timePerStep: number) {
     try {
       interpreter.current.setProgram(code);
     }
     catch (e) {
-      setStatusMessage({type: "error", message: "Scanning failed: " + e})
+      //setStatusMessage({type: "error", message: })
+      setStatusMessage("Scanning failed: " + e);
+      setStatusType("error");
       return;
     }
 
@@ -45,7 +46,9 @@ function App() {
     }
 
     setProgramRunning(true);
-    setStatusMessage({message: ""});
+    setStatusMessage("");
+    setStatusType(undefined);
+
     await interpreter.current.runProgramAsync(timePerStep, () => {
       setMemory([...interpreter.current.memory])
       setProgramOutput(String.fromCharCode(...interpreter.current.output));
@@ -55,13 +58,15 @@ function App() {
     // compare the input output
     for (let i = 0; i < interpreter.current.size; i++) {
       if (interpreter.current.memory[i] !== targets[i]) {
-        setStatusMessage({type: "error", message: "Memory state is incorrect"});
+        //setStatusMessage({type: "error", message: "Memory state is incorrect"});
+        setStatusType("error");
+        setStatusMessage("Memory state is incorrect");
         return;
       }
     }
 
-    
-    setStatusMessage({type: "success", message: "Correct!"})
+    setStatusMessage("Correct!");
+    setStatusType("success");
     setCorrectProgramLength(code.length);
   }
 
@@ -69,18 +74,7 @@ function App() {
     interpreter.current.stopProgram();
   }
 
-  function getStatusCard() {
-    if (statusMessage.type === undefined) {
-      return <></>;
-    }
-
-    return (
-      <div className={statusMessage.type === "success" ? "success-card" : "error-card"}>
-        {<p>{statusMessage.message}</p>}
-        {statusMessage.type === "success" ? <p>Your program is {correctProgramLength} characters long. Can you make it shorter?</p> : <></>}
-      </div>
-    );
-  }
+  
 
   return (
     <>
@@ -89,29 +83,11 @@ function App() {
 
         <Instructions></Instructions>        
 
-        <div>
-          <label htmlFor="program">Program:</label> <br/>
-          <textarea name="program" rows={8} cols={64} value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
-
-          <div>
-            <label>Time per step (ms): </label> <br/>
-            <input type="number" min={5} max={1000} step={1} value={timePerStep} onChange={event => setTimePerStep(event.target.valueAsNumber)}/> <br/>
-          </div>
-
-          <div>
-            <label>Program Input (ASCII Encoded): </label> <br/>
-            <textarea name="programinput" rows={1} cols={64} value={programInput} onChange={event => setProgramInput(event.target.value)}></textarea> <br/>
-          </div>
-          
-          <div style={{ paddingTop: 10 }}>
-            
-            {programRunning === false ? <button onClick={runCodeAsync}>Run</button> : <button onClick={breakProgram}>Break</button>}
-          </div>
-        </div>
+        <ProgramInputForm onRunProgram={runCodeAsync} onBreakProgram={breakProgram} programRunning={programRunning}></ProgramInputForm>        
 
         <ProgramOutputViewer targets={targets} memoryIndex={interpreter.current.memoryIndex} memory={memory} programOutput={programOutput}></ProgramOutputViewer>
         
-        {getStatusCard()}
+        <StatusCard message={statusMessage} type={statusType} programLength={correctProgramLength}></StatusCard>
     </>
   )
 }
