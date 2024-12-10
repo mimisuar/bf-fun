@@ -17,7 +17,7 @@ const instructions: {char: string, instruction: string}[] = [
 ];
 
 function App() {
-  const interpreter = useRef<BfInterpreter>(new BfInterpreter({memorySize: 8, disableIO: true}));
+  const interpreter = useRef<BfInterpreter>(new BfInterpreter({memorySize: 32, disableIO: true}));
   const [code, setCode] = useState("");
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
   const [targets, setTargets] = useState<number[]>([]);
@@ -28,7 +28,10 @@ function App() {
   const [showInstructions, setShowInstructions] = useState(false);
 
   useEffect(() => {
-    let tmpTargets = [0, 12, 0, 0, 0, 0, 0, 0];
+    let tmpTargets = [];
+    for (let i = 0; i < interpreter.current.size; i++) {
+      tmpTargets[i] = 0;
+    }
 
     setTargets(tmpTargets);
   }, [])
@@ -50,7 +53,7 @@ function App() {
     // compare the input output
     for (let i = 0; i < interpreter.current.size; i++) {
       if (interpreter.current.memory[i] !== targets[i]) {
-        setStatusMessage({type: "error", message: "Output is incorrect"});
+        setStatusMessage({type: "error", message: "Memory state is incorrect"});
         return;
       }
     }
@@ -104,7 +107,7 @@ function App() {
         </div>
 
         <div>
-          <textarea rows={4} cols={64} value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
+          <textarea rows={8} cols={64} value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
           <label>Time per step (ms): </label> <br/>
           <input type="number" min={5} max={1000} step={1} value={timePerStep} onChange={event => setTimePerStep(event.target.valueAsNumber)}/>
           <div style={{ paddingTop: 10 }}>
