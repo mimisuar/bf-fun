@@ -22,7 +22,7 @@ function App() {
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
   const [targets, setTargets] = useState<number[]>([]);
   const [programRunning, setProgramRunning] = useState(false);
-  const [timePerStep, setTimePerStep] = useState(500);
+  const [timePerStep, setTimePerStep] = useState(66);
   const [statusMessage, setStatusMessage] = useState<StatusMessage>({message: ""})
   const [correctProgramLength, setCorrectProgramLength] = useState(0);
   const [showInstructions, setShowInstructions] = useState(false);
@@ -54,10 +54,17 @@ function App() {
 
     setProgramRunning(true);
     setStatusMessage({message: ""});
+    try {
     await interpreter.current.runProgramAsync(timePerStep, () => {
       setMemory([...interpreter.current.memory])
       setProgramOutput(String.fromCharCode(...interpreter.current.output));
     }, input);
+    }
+    catch (e) {
+      setStatusMessage({type: "error", message: e as string});
+      setProgramRunning(false);
+      return;  
+    }
     setProgramRunning(false);
 
     // compare the input output

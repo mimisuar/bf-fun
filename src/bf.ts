@@ -176,7 +176,8 @@ class BfInterpreter {
     pullFromInput(): void {
         let num = this.input.pop();
         if (num === undefined) {
-            throw "Insufficient input.";
+            this.memory[this.memoryIndex] = 0;
+            return;
         }
         this.memory[this.memoryIndex] = num!;
     }
