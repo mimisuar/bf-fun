@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import './App.css'
 import BfInterpreter from './bf'
 import Instructions from './components/Instructions'
+import ProgramOutputViewer from './components/ProgramOutputViewer'
 
 interface StatusMessage {
   type?: "success" | "error",
@@ -17,7 +18,6 @@ function App() {
   const [timePerStep, setTimePerStep] = useState(66);
   const [statusMessage, setStatusMessage] = useState<StatusMessage>({message: ""})
   const [correctProgramLength, setCorrectProgramLength] = useState(0);
-  
   const [programInput, setProgramInput] = useState("");
   const [programOutput, setProgramOutput] = useState("");
 
@@ -109,25 +109,7 @@ function App() {
           </div>
         </div>
 
-        <div>
-          <table>
-            <tbody>
-              <tr>
-                <td>Target</td>
-                {targets.map((targetValue, index) => <th key={index} className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{targetValue}</th>)}
-              </tr>
-              <tr>
-                <td>Values</td>
-                {memory.map((value, index) => <td key={index} className={index === interpreter.current.memoryIndex ? "highlight" : ""}>{value}</td>)}
-              </tr>
-            </tbody>
-          </table>
-
-          <div>
-            <label>Program Output: </label> <br/>
-            <textarea readOnly={true} rows={1} cols={64} value={programOutput}></textarea>
-          </div>
-        </div>
+        <ProgramOutputViewer targets={targets} memoryIndex={interpreter.current.memoryIndex} memory={memory} programOutput={programOutput}></ProgramOutputViewer>
         
         {getStatusCard()}
     </>
