@@ -54,17 +54,10 @@ function App() {
 
     setProgramRunning(true);
     setStatusMessage({message: ""});
-    try {
     await interpreter.current.runProgramAsync(timePerStep, () => {
       setMemory([...interpreter.current.memory])
       setProgramOutput(String.fromCharCode(...interpreter.current.output));
     }, input);
-    }
-    catch (e) {
-      setStatusMessage({type: "error", message: e as string});
-      setProgramRunning(false);
-      return;  
-    }
     setProgramRunning(false);
 
     // compare the input output
