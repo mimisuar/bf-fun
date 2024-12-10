@@ -7,6 +7,15 @@ interface StatusMessage {
   message: string
 }
 
+const instructions: {char: string, instruction: string}[] = [
+  {char: ">", instruction: "Move data pointer to the right"},
+  {char: "<", instruction: "Move data pointer to the left"},
+  {char: "+", instruction: "Increment the value at the data pointer by one"},
+  {char: "-", instruction: "Decrement the value at the data pointer by one"},
+  {char: "[", instruction: "If the value at the data pointer is 0, jump forward the matching ]"},
+  {char: "]", instruction: "If the value at the data pointer is not 0, jump back to the matching ["}
+];
+
 function App() {
   const interpreter = useRef<BfInterpreter>(new BfInterpreter({memorySize: 8, disableIO: true}));
   const [code, setCode] = useState("");
@@ -16,6 +25,7 @@ function App() {
   const [timePerStep, setTimePerStep] = useState(500);
   const [statusMessage, setStatusMessage] = useState<StatusMessage>({message: ""})
   const [correctProgramLength, setCorrectProgramLength] = useState(0);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   useEffect(() => {
     let tmpTargets = [0, 12, 0, 0, 0, 0, 0, 0];
@@ -71,6 +81,28 @@ function App() {
     <>
         <h1>BF Golf</h1>
         <p>The bottom row represents the memory state of the your interpreter. <br/>Write a program to match the top and bottom rows in as few characters as possible!</p>
+
+        <div style={{padding: 10}}> 
+        {showInstructions ? 
+          <>
+            <table>
+              <thead>
+                <tr>
+                  <td>Character</td>
+                  <td>Instruction</td>
+                </tr>
+              </thead>
+              <tbody>
+                {instructions.map(value => <tr><td className="highlight">{value.char}</td><td>{value.instruction}</td></tr>)}
+              </tbody>
+            </table>
+            <button onClick={_ => setShowInstructions(false)}>Hide Instructions</button>
+          </>
+        : 
+          <button onClick={_ => setShowInstructions(true)}>Show Instructions</button>
+        }
+        </div>
+
         <div>
           <textarea rows={4} cols={64} value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
           <label>Time per step (ms): </label> <br/>
