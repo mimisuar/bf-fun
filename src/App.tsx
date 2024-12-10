@@ -87,7 +87,9 @@ function App() {
 
         <ProgramOutputViewer targets={targets} memoryIndex={interpreter.current.memoryIndex} memory={memory} programOutput={programOutput}></ProgramOutputViewer>
         
+        {/*
         <StatusCard message={statusMessage} type={statusType} programLength={correctProgramLength}></StatusCard>
+        */}
     </>
   )
 }

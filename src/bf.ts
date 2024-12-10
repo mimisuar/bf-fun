@@ -163,10 +163,16 @@ class BfInterpreter {
 
     incrementMemory(): void {
         this.memory[this.memoryIndex] += 1;
+        if (this.memory[this.memoryIndex] >= 256) {
+            this.memory[this.memoryIndex] = 0;
+        }
     }
 
     decrementMemory(): void {
         this.memory[this.memoryIndex] -= 1;
+        if (this.memory[this.memoryIndex] < 0) {
+            this.memory[this.memoryIndex] = 255;
+        }
     }
 
     pushToOutput(): void {
