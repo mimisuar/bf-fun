@@ -12,14 +12,14 @@ function ProgramInputForm(props: ProgramInputFormProps) {
     const [programInput, setProgramInput] = useState("");
 
     useEffect(() => {
-      setCode(",[>,]<[.<]\n\nwrite text in the box below, then hit run!\nThen try modifying this program with your own BF code")
+      setCode(",[>,]<[.<]\n\nwrite text in the box below then hit run!\nThen try modifying this program with your own BF code")
       setProgramInput("Hello, world!")
     }, [])
 
     return (
         <div>
           <label htmlFor="program">Program:</label> <br/>
-          <textarea name="program" rows={8} cols={64} value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
+          <textarea name="program" rows={8} cols={64} value={code} onChange={event => setCode(event.target.value)}></textarea> <br/>
 
           <div>
             <label>Program Input (ASCII Encoded): </label> <br/>
