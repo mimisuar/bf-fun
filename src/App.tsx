@@ -27,6 +27,10 @@ function App() {
     }
 
     setTargets(tmpTargets);
+
+    interpreter.current.outputCallback = value => {
+      setProgramOutput(String.fromCharCode(...interpreter.current.output));
+    }
   }, [])
 
   async function runCodeAsync(code: string, programInput: string, timePerStep: number) {
@@ -51,8 +55,7 @@ function App() {
 
     await interpreter.current.runProgramAsync(timePerStep, () => {
       setMemory([...interpreter.current.memory])
-      setProgramOutput(String.fromCharCode(...interpreter.current.output));
-    }, input);
+    },input);
     setProgramRunning(false);
 
     // compare the input output

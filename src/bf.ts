@@ -10,6 +10,9 @@ const defaultOptions: BfInterpreterOptions = {
     disableIO: false
 };
 
+type OutputCallback = (outputValue: number) => void;
+type StepCallback = () => void;
+
 class BfInterpreter {
     memory: number[] = [];
     jumpPoints: number[] = [];
@@ -21,7 +24,7 @@ class BfInterpreter {
     input: number[] = [];
     disableIO: boolean = false;
 
-    constructor(options?: BfInterpreterOptions) {
+    constructor(options?: BfInterpreterOptions, public outputCallback?: OutputCallback) {
         if (options === undefined) {
             options = defaultOptions;
         }
@@ -79,14 +82,6 @@ class BfInterpreter {
         }
     }
 
-    runProgram(input: number[] = []): void {
-        this.resetProgramState(input);
-
-        while (this.programCounter < this.program.length) {
-            this.interpretCode();
-        }
-    }
-
     async runProgramAsync(timerPerStep: number, stepCallback: () => void, input: number[] = []) {
         this.resetProgramState(input);
         const actionCharacters: string = "+-><"; // these are the characters that alter machine state
@@ -114,7 +109,6 @@ class BfInterpreter {
         this.memoryIndex = 0;
     }
 
-    // this function returns the next program counter
     interpretCode(): void {
         let character: string = this.program[this.programCounter];
         switch (character) {
@@ -137,6 +131,7 @@ class BfInterpreter {
             case ".":
                 if (!this.disableIO) {
                     this.pushToOutput();
+                    if (this.outputCallback) {this.outputCallback(this.memory[this.memoryIndex]);}
                 }
                 break;
 
