@@ -5,10 +5,13 @@ import Instructions from './components/Instructions'
 import ProgramOutputViewer from './components/ProgramOutputViewer'
 import ProgramInputForm from './components/ProgramInputForm'
 import {StatusCard, StatusType} from './components/StatusCard'
+import { delay } from './util';
+import * as Tone from "tone";
 
 
 function App() {
   const interpreter = useRef<BfInterpreter>(new BfInterpreter({memorySize: 32, disableIO: false}));
+  const synth = useRef<Tone.MonoSynth | null>(null);
   
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
   const [targets, setTargets] = useState<number[]>([]);
@@ -29,10 +32,26 @@ function App() {
     setTargets(tmpTargets);
 
     interpreter.current.stepCallback = () => setMemory([...interpreter.current.memory]);
-    interpreter.current.outputCallback = _value => setProgramOutput(String.fromCharCode(...interpreter.current.output));
+    interpreter.current.outputCallback = value => {
+      let freq = Tone.Frequency(value, "midi");
+      synth.current?.triggerAttackRelease(freq.toNote(), "1n");
+    }
   }, [])
 
   async function runCodeAsync(code: string, programInput: string, timePerStep: number) {
+    if (Tone.getContext().state !== "running") {
+      Tone.start();
+      synth.current = new Tone.MonoSynth({
+        filterEnvelope: {
+          attack: 0
+        },
+        envelope: {
+          attack: 0
+        }
+      });
+      synth.current.toDestination();
+    }
+
     try {
       interpreter.current.setProgram(code);
     }
