@@ -12,6 +12,8 @@ const defaultOptions: BfInterpreterOptions = {
 
 type OutputCallback = (outputValue: number) => void;
 type StepCallback = () => void;
+type ShiftCallback = () => void;
+type ValueChangeCallback = () => void;
 
 class BfInterpreter {
     memory: number[] = [];
@@ -23,7 +25,12 @@ class BfInterpreter {
     output: number[] = [];
     input: number[] = [];
     disableIO: boolean = false;
+
     public stepCallback?: StepCallback;
+    public shiftRightCallback?: ShiftCallback;
+    public shiftLeftCallback?: ShiftCallback;
+    public incrementCallback?: ValueChangeCallback;
+    public decrementCallback?: ValueChangeCallback;
     public outputCallback?: OutputCallback;
 
     constructor(options?: BfInterpreterOptions) {
@@ -118,18 +125,30 @@ class BfInterpreter {
         switch (character) {
             case ">":
                 this.moveMemoryIndexRight();
+                if (this.shiftRightCallback) {
+                    this.shiftRightCallback();
+                }
                 break;
 
             case "<":
                 this.moveMemoryIndexLeft();
+                if (this.shiftLeftCallback) {
+                    this.shiftLeftCallback();
+                }
                 break;
 
             case "+":
                 this.incrementMemory();
+                if (this.incrementCallback) {
+                    this.incrementCallback();
+                }
                 break;
             
             case "-":
                 this.decrementMemory();
+                if (this.decrementCallback) {
+                    this.decrementCallback();
+                }
                 break;
 
             case ".":

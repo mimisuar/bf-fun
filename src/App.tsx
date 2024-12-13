@@ -10,7 +10,8 @@ import * as Tone from "tone";
 
 function App() {
   const interpreter = useRef<BfInterpreter>(new BfInterpreter({memorySize: 32, disableIO: false}));
-  const synth = useRef<Tone.MonoSynth | null>(null);
+  const outputSynth = useRef<Tone.MonoSynth | null>(null);
+  const players = useRef<Tone.Players | null>(null);
   
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
   const [programRunning, setProgramRunning] = useState(false);
@@ -24,22 +25,37 @@ function App() {
     interpreter.current.stepCallback = () => setMemory([...interpreter.current.memory]);
     interpreter.current.outputCallback = value => {
       let freq = Tone.Frequency(value, "midi");
-      synth.current?.triggerAttackRelease(freq.toNote(), "1n");
+      outputSynth.current?.triggerAttackRelease(freq.toNote(), "1n");
     }
+
+    const shiftCallback = () => players.current?.player("click")?.start();
+    interpreter.current.shiftRightCallback = shiftCallback;
+    interpreter.current.shiftLeftCallback = shiftCallback;
+
+    const valueChangeCallback = () => players.current?.player("mouth")?.start();
+    interpreter.current.incrementCallback = valueChangeCallback;
+    interpreter.current.decrementCallback = valueChangeCallback;
+
+    outputSynth.current = new Tone.MonoSynth({
+      filterEnvelope: {
+        attack: 0
+      },
+      envelope: {
+        attack: 0
+      }
+    });
+    outputSynth.current.toDestination();
+
+    players.current = new Tone.Players({
+      "mouth": "./bf-fun/src/assets/Perc_MouthPop_hi.wav",
+      "click": "./bf-fun/src/assets/Synth_Square_A_hi.wav"
+    });
+    players.current.toDestination();
   }, [])
 
   async function runCodeAsync(code: string, programInput: string, timePerStep: number) {
     if (Tone.getContext().state !== "running") {
       Tone.start();
-      synth.current = new Tone.MonoSynth({
-        filterEnvelope: {
-          attack: 0
-        },
-        envelope: {
-          attack: 0
-        }
-      });
-      synth.current.toDestination();
     }
 
     try {
@@ -63,7 +79,7 @@ function App() {
 
     await interpreter.current.runProgramAsync(timePerStep, input);
     setProgramRunning(false);
-    synth.current?.triggerRelease();
+    outputSynth.current?.triggerRelease();
 
     setStatusType(undefined);
   }
