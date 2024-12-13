@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ProgramInputFormProps {
     programRunning: boolean
@@ -10,6 +10,11 @@ function ProgramInputForm(props: ProgramInputFormProps) {
     const [code, setCode] = useState("");
     const [timePerStep, setTimePerStep] = useState(66);
     const [programInput, setProgramInput] = useState("");
+
+    useEffect(() => {
+      setCode(",[>,]<[.<]\n\nwrite text in the box below, then hit run!\nThen try modifying this program with your own BF code")
+      setProgramInput("Hello, world!")
+    }, [])
 
     return (
         <div>
