@@ -40,9 +40,20 @@ class BfInterpreter {
     }
 
     setProgram(program: string): void {
-        this.program = program;
+        this.program = this.stripProgram(program);
+        console.log(this.program);
         this.resetMemory();
         this.scanForLoopPoints();
+    }
+
+    stripProgram(program: string): string {
+        let final = "";
+        for (let i = 0; i < program.length; i++) {
+            if ("+-[]<>.,".includes(program[i])) {
+                final += program[i];
+            }
+        }
+        return final;
     }
 
     scanForLoopPoints(): void {
