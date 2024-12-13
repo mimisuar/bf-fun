@@ -23,8 +23,10 @@ class BfInterpreter {
     output: number[] = [];
     input: number[] = [];
     disableIO: boolean = false;
+    public stepCallback?: StepCallback;
+    public outputCallback?: OutputCallback;
 
-    constructor(options?: BfInterpreterOptions, public outputCallback?: OutputCallback) {
+    constructor(options?: BfInterpreterOptions) {
         if (options === undefined) {
             options = defaultOptions;
         }
@@ -82,14 +84,16 @@ class BfInterpreter {
         }
     }
 
-    async runProgramAsync(timerPerStep: number, stepCallback: StepCallback, input: number[] = []) {
+    async runProgramAsync(timerPerStep: number, input: number[] = []) {
         this.resetProgramState(input);
         const actionCharacters: string = "+-><"; // these are the characters that alter machine state
 
         while (this.programCounter < this.program.length) {
             let character = this.program[this.programCounter];
             this.interpretCode();
-            stepCallback();
+            if (this.stepCallback) { 
+                this.stepCallback(); 
+            }
 
             if (!actionCharacters.includes(character)) {
                 continue;
@@ -131,7 +135,9 @@ class BfInterpreter {
             case ".":
                 if (!this.disableIO) {
                     this.pushToOutput();
-                    if (this.outputCallback) {this.outputCallback(this.memory[this.memoryIndex]);}
+                    if (this.outputCallback) {
+                        this.outputCallback(this.memory[this.memoryIndex]);
+                    }
                 }
                 break;
 
