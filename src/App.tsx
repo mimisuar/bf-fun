@@ -28,7 +28,7 @@ function App() {
 
     setTargets(tmpTargets);
 
-    interpreter.current.outputCallback = value => {
+    interpreter.current.outputCallback = _value => {
       setProgramOutput(String.fromCharCode(...interpreter.current.output));
     }
   }, [])

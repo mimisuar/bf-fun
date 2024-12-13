@@ -82,7 +82,7 @@ class BfInterpreter {
         }
     }
 
-    async runProgramAsync(timerPerStep: number, stepCallback: () => void, input: number[] = []) {
+    async runProgramAsync(timerPerStep: number, stepCallback: StepCallback, input: number[] = []) {
         this.resetProgramState(input);
         const actionCharacters: string = "+-><"; // these are the characters that alter machine state
 
