@@ -13,7 +13,6 @@ function App() {
   const synth = useRef<Tone.MonoSynth | null>(null);
   
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
-  const [targets, setTargets] = useState<number[]>([]);
   const [programRunning, setProgramRunning] = useState(false);
 
   // for the status card
@@ -21,11 +20,6 @@ function App() {
   const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
-    let tmpTargets = [];
-    for (let i = 0; i < interpreter.current.size; i++) {
-      tmpTargets[i] = 0;
-    }
-    setTargets(tmpTargets);
 
     interpreter.current.stepCallback = () => setMemory([...interpreter.current.memory]);
     interpreter.current.outputCallback = value => {
@@ -82,14 +76,14 @@ function App() {
 
   return (
     <>
-        <h1>BF Golf</h1>
-        <p>The bottom row represents the memory state of the your interpreter. <br/>Write a program to match the top and bottom rows in as few characters as possible!</p>
+        <h1>BF Tone</h1>
+        <p>Control a synth with the BF language</p>
 
         <Instructions></Instructions>        
 
         <ProgramInputForm onRunProgram={runCodeAsync} onBreakProgram={breakProgram} programRunning={programRunning}></ProgramInputForm>        
 
-        <ProgramOutputViewer targets={targets} memoryIndex={interpreter.current.memoryIndex} memory={memory}></ProgramOutputViewer>
+        <ProgramOutputViewer memoryIndex={interpreter.current.memoryIndex} memory={memory}></ProgramOutputViewer>
         
         <StatusCard message={statusMessage} type={statusType}></StatusCard>
     </>

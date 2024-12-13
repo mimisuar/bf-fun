@@ -1,5 +1,5 @@
 interface ProgramOutputViewerProps {
-    targets: number[]
+    targets?: number[]
     memoryIndex: number,
     memory: number[],
     programOutput?: string
@@ -10,19 +10,21 @@ function ProgramOutputViewer(props: ProgramOutputViewerProps) {
         <div>
           <table>
             <tbody>
+              { !props.targets ? <></> :
               <tr>
                 <td>Target</td>
                 {props.targets.map((targetValue, index) => <th key={index} className={index === props.memoryIndex ? "highlight" : ""}>{targetValue}</th>)}
               </tr>
+              }
               <tr>
-                <td>Values</td>
+                <td>Memory</td>
                 {props.memory.map((value, index) => <td key={index} className={index === props.memoryIndex ? "highlight" : ""}>{value}</td>)}
               </tr>
             </tbody>
           </table>
 
           {
-            props.programOutput === undefined ? <></> : 
+            !props.programOutput ? <></> : 
           <div>
             <label>Program Output: </label> <br/>
             <textarea readOnly={true} rows={1} cols={64} value={props.programOutput}></textarea>
