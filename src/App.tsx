@@ -5,7 +5,6 @@ import Instructions from './components/Instructions'
 import ProgramOutputViewer from './components/ProgramOutputViewer'
 import ProgramInputForm from './components/ProgramInputForm'
 import {StatusCard, StatusType} from './components/StatusCard'
-import { delay } from './util';
 import * as Tone from "tone";
 
 
@@ -73,6 +72,7 @@ function App() {
 
     await interpreter.current.runProgramAsync(timePerStep, input);
     setProgramRunning(false);
+    synth.current?.triggerRelease();
 
     // compare the input output
     for (let i = 0; i < interpreter.current.size; i++) {
