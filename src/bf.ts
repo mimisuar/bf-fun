@@ -1,4 +1,4 @@
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+import {delay} from "./util"
 
 interface BfInterpreterOptions {
     memorySize?: number;
@@ -86,7 +86,7 @@ class BfInterpreter {
 
     async runProgramAsync(timerPerStep: number, input: number[] = []) {
         this.resetProgramState(input);
-        const actionCharacters: string = "+-><"; // these are the characters that alter machine state
+        const actionCharacters: string = "+-><."; // these are the characters that alter machine state
 
         while (this.programCounter < this.program.length) {
             let character = this.program[this.programCounter];

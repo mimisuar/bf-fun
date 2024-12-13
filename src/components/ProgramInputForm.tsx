@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ProgramInputFormProps {
     programRunning: boolean
@@ -6,15 +6,40 @@ interface ProgramInputFormProps {
     onBreakProgram: () => void
 }
 
+const INITIAL_PROGRAM: string = `read the input data into memory
+,[>,] 
+++++++++++++ 
+[ bring all the high notes down a few octaves
+<<-----<-----
+<------<-----
+<------<<<------
+<------<----<----
+>>>>>>>>>>>>-
+]
+
+set up the final note
+>++++++++++++[<++++>-]<
+
+make sharps and flats natural
+<<<<+<-<<-<-<+<<<++<
+
+play back the tune
+[.>]`;
+
 function ProgramInputForm(props: ProgramInputFormProps) {
     const [code, setCode] = useState("");
     const [timePerStep, setTimePerStep] = useState(66);
     const [programInput, setProgramInput] = useState("");
 
+    useEffect(() => {
+      setCode(INITIAL_PROGRAM);
+      setProgramInput("Hello, world!");
+    }, [])
+
     return (
         <div>
           <label htmlFor="program">Program:</label> <br/>
-          <textarea name="program" rows={8} cols={64} value={code} onChange={(event) => setCode(event.target.value)}></textarea> <br/>
+          <textarea name="program" rows={8} cols={64} value={code} onChange={event => setCode(event.target.value)}></textarea> <br/>
 
           <div>
             <label>Program Input (ASCII Encoded): </label> <br/>
