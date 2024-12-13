@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Frequency } from "tone"
+
 interface ProgramOutputViewerProps {
     targets?: number[]
     memoryIndex: number,
@@ -6,8 +9,14 @@ interface ProgramOutputViewerProps {
 }
 
 function ProgramOutputViewer(props: ProgramOutputViewerProps) {
+    const [showAsNumber, setShowAsNumber] = useState<boolean>(false);
+
+    const getDisplayValue = (value: number): string | number => showAsNumber ? value : Frequency(value, "midi").toNote() as string;
+
     return (
         <div>
+          <label>Show memory as numbers: </label>
+          <input type="checkbox" checked={showAsNumber} onChange={event => setShowAsNumber(event.target.checked)} />
           <table>
             <tbody>
               { !props.targets ? <></> :
@@ -18,7 +27,7 @@ function ProgramOutputViewer(props: ProgramOutputViewerProps) {
               }
               <tr>
                 <td>Memory</td>
-                {props.memory.map((value, index) => <td key={index} className={index === props.memoryIndex ? "highlight" : ""}>{value}</td>)}
+                {props.memory.map((value, index) => <td key={index} className={index === props.memoryIndex ? "highlight" : ""}>{getDisplayValue(value)}</td>)}
               </tr>
             </tbody>
           </table>
