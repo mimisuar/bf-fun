@@ -15,19 +15,16 @@ function App() {
   const [memory, setMemory] = useState<number[]>(interpreter.current.memory);
   const [targets, setTargets] = useState<number[]>([]);
   const [programRunning, setProgramRunning] = useState(false);
-  const [programOutput, setProgramOutput] = useState("");
 
   // for the status card
   const [statusType, setStatusType] = useState<StatusType | undefined>(undefined);
   const [statusMessage, setStatusMessage] = useState("");
-  const [correctProgramLength, setCorrectProgramLength] = useState(0);
 
   useEffect(() => {
     let tmpTargets = [];
     for (let i = 0; i < interpreter.current.size; i++) {
       tmpTargets[i] = 0;
     }
-
     setTargets(tmpTargets);
 
     interpreter.current.stepCallback = () => setMemory([...interpreter.current.memory]);
@@ -74,19 +71,7 @@ function App() {
     setProgramRunning(false);
     synth.current?.triggerRelease();
 
-    // compare the input output
-    for (let i = 0; i < interpreter.current.size; i++) {
-      if (interpreter.current.memory[i] !== targets[i]) {
-        //setStatusMessage({type: "error", message: "Memory state is incorrect"});
-        setStatusType("error");
-        setStatusMessage("Memory state is incorrect");
-        return;
-      }
-    }
-
-    setStatusMessage("Correct!");
-    setStatusType("success");
-    setCorrectProgramLength(code.length);
+    setStatusType(undefined);
   }
 
   function breakProgram() {
@@ -104,9 +89,9 @@ function App() {
 
         <ProgramInputForm onRunProgram={runCodeAsync} onBreakProgram={breakProgram} programRunning={programRunning}></ProgramInputForm>        
 
-        <ProgramOutputViewer targets={targets} memoryIndex={interpreter.current.memoryIndex} memory={memory} programOutput={programOutput}></ProgramOutputViewer>
+        <ProgramOutputViewer targets={targets} memoryIndex={interpreter.current.memoryIndex} memory={memory}></ProgramOutputViewer>
         
-        <StatusCard message={statusMessage} type={statusType} programLength={correctProgramLength}></StatusCard>
+        <StatusCard message={statusMessage} type={statusType}></StatusCard>
     </>
   )
 }
