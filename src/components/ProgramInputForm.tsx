@@ -6,14 +6,34 @@ interface ProgramInputFormProps {
     onBreakProgram: () => void
 }
 
+const INITIAL_PROGRAM: string = `read the input data into memory
+,[>,] 
+++++++++++++ 
+[ bring all the high notes down a few octaves
+<<-----<-----
+<------<-----
+<------<<<------
+<------<----<----
+>>>>>>>>>>>>-
+]
+
+set up the final note
+>++++++++++++[<++++>-]<
+
+make sharps and flats natural
+<<<<+<-<<-<-<+<<<++<
+
+play back the tune
+[.>]`;
+
 function ProgramInputForm(props: ProgramInputFormProps) {
     const [code, setCode] = useState("");
     const [timePerStep, setTimePerStep] = useState(66);
     const [programInput, setProgramInput] = useState("");
 
     useEffect(() => {
-      setCode(",[>,]<[.<]\n\nwrite text in the box below then hit run!\nThen try modifying this program with your own BF code")
-      setProgramInput("Hello, world!")
+      setCode(INITIAL_PROGRAM);
+      setProgramInput("Hello, world!");
     }, [])
 
     return (
