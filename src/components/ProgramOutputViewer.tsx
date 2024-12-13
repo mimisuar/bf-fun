@@ -2,7 +2,7 @@ interface ProgramOutputViewerProps {
     targets: number[]
     memoryIndex: number,
     memory: number[],
-    programOutput: string
+    programOutput?: string
 }
 
 function ProgramOutputViewer(props: ProgramOutputViewerProps) {
@@ -21,10 +21,13 @@ function ProgramOutputViewer(props: ProgramOutputViewerProps) {
             </tbody>
           </table>
 
+          {
+            props.programOutput === undefined ? <></> : 
           <div>
             <label>Program Output: </label> <br/>
             <textarea readOnly={true} rows={1} cols={64} value={props.programOutput}></textarea>
           </div>
+          }
         </div>
     );
 }

@@ -14,7 +14,7 @@ export function StatusCard(props: StatusMessageProps) {
     return (
       <div className={props.type === "success" ? "success-card" : "error-card"}>
         {<p>{props.message}</p>}
-        {props.type === "success" ? <p>Your program is {props.programLength} characters long. Can you make it shorter?</p> : <></>}
+        {props.programLength ? <p>Your program is {props.programLength} characters long. Can you make it shorter?</p> : <></>}
       </div>
     );
   }
